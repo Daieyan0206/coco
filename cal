@@ -1,37 +1,42 @@
-def calculate_price(length, width, weight, height):
-        volume = length * width * height 
+Imports System.Data.OleDb
 
-        if weight <= 1:
-            if volume <= 5000:
-                return 3
-            elif volume <= 10000:
-                return 5
-            else:
-                return 7
-        elif weight <= 5:
-            if volume <= 5000:
-                return 5
-            elif volume <= 10000:
-                return 7
-            else:
-                return 9
-        else:
-            if volume <= 5000:
-                return 7
-            elif volume <= 10000:
-                return 9
-            else:
-                return 11
+Public Class Form2
 
-def save_parcel_data(length, width, height, weight, price):
-    file_path = "C:\\Users\\user\\Desktop\\PSP\\SEM 5\\PYTHON\\Test\\kotak.txt"
-    with open(file_path, 'a') as file:
-        file.write(f"Length : {length} cm\n")
-        file.write(f"Width : {width} cm\n")
-        file.write(f"Height : {height} cm\n")
-        file.write(f"Weight : {weight} kg\n")
-        file.write(f"Price : RM{price}\n")
-        file.write("\n")
-            
+    Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Load data from the database into the DataGridView
+        LoadData()
+    End Sub
 
-        
+    Private Sub LoadData()
+        Try
+            ' Open the connection
+            If con.State = ConnectionState.Closed Then
+                con.Open()
+            End If
+
+            ' Select command
+            Dim selectQuery As String = "SELECT * FROM Patient"
+            da = New OleDb.OleDbDataAdapter(selectQuery, con)
+
+            ' Fill the DataSet
+            ds = New DataSet()
+            da.Fill(ds, "Patient")
+
+            ' Bind the DataSet to the DataGridView
+            DataGridView1.DataSource = ds.Tables("Patient")
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            ' Close the connection
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+        ' Optional: Handle cell content click event
+    End Sub
+
+End Class
